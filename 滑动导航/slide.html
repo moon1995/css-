@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="zepto.js"></script>
+</head>
+<style type="text/css" media="screen">
+    html, body {
+    width: 100%;
+    background: #f90;
+    margin:0;
+    padding: 0;
+    }
+    ul li {
+    list-style: none;
+    width:300px;
+    height:400px;
+    }
+
+    *{margin:0;padding:0;}
+    #box {
+    width: 100%;
+    margin: 20px auto;
+    }
+    .slide {
+    height: 500px;
+    position: relative;
+    }
+    .slide ul {
+    height: 100%;
+    width:100%;
+    }
+    .slide li {
+    position: absolute;
+    top:0;
+    transition: all 1s ease 0s;
+    }
+    .slide li img{
+    width: 100%;
+    height:100%;
+    }
+    .arraw {
+    opacity: 0;
+    }
+    .arraw a {
+    width: 70px;
+    height: 110px;
+    display: block;
+    position: absolute;
+    top: 50%;
+    margin-top: -55px;
+    z-index: 999;
+    }
+    .next {
+    background: #ff0;
+    right: -10px;
+    /*opacity: .5;*/
+    /*filter: alpha(opacity=50);*/
+    }
+    .prev {
+    background: #ff0;
+    left: -10px;
+    }
+    </style>
+<body>
+    <div id="box">
+        <div class="slide">
+            <ul>
+            <li><a href="#"><img src="imagePlayer/images/1.jpg" alt="">0</a></li>
+            <li><a href="#"><img src="imagePlayer/images/2.jpg" alt="">1</a></li>
+            <li><a href="#"><img src="imagePlayer/images/3.jpg" alt="">2</a></li>
+            <li><a href="#"><img src="imagePlayer/images/4.jpg" alt="">3</a></li>
+            <li><a href="#"><img src="imagePlayer/images/5.jpg" alt="">4</a></li>
+            <!-- <li><a href="#"><img src="imagePlayer/images/3.jpg" alt=""></a></li> -->
+            </ul>
+            <div class="arraw">
+            <a href="javascript:;" class="next">></a>
+            <a href="javascript:;" class='prev'><</a>
+            </div>
+        </div>
+    </div> 
+    <script>
+        var json = [  //  包含了5张图片里面所有的样式
+	{   //  1
+		top:20,
+		left:100,
+		opacity:20,
+        zIndex:5,
+        scale:1,
+		id:1
+	},
+	{  // 2
+		top:70,
+		left:190,
+		opacity:60,
+        zIndex:4,
+        scale:0.8,
+		id:2
+	},
+	{   // 3
+		top:100,
+		left:230,
+		opacity:100,
+        zIndex:3,
+        scale:0.7,
+		id:3
+	},
+	{  // 4
+		top:70,
+		left:230,
+		opacity:1,
+        zIndex:2,
+        scale:0.7,
+		id:4
+	},
+	{   //5
+		top:20,
+		left:230,
+		opacity:1,
+        zIndex:1,
+        scale:0.7,
+		id:5
+	}
+];
+for(var i=0;i<json.length;i++){
+    $("#box .slide li").eq(i).css({
+        "left":json[i].left,
+        "zIndex":json[i].zIndex,
+        "transform":"scale("+json[i].scale+")",
+        "opacity":json[i].opacity
+    })
+    // console.log(i);
+}
+var arr=[];
+for(var i=0;i<5;i++){
+        arr.push(i)
+    }
+function autoplay(index,arr,json){ 
+    /*
+        三个参数：
+        index:最前面消失元素的index
+        arr:所有元素的下角标数组集合
+        json:每个元素的位置
+    */
+    arr.push(arr.shift())
+    // console.log(arr,"mmmmmmm");
+    //最前面的图消失
+    $("#box .slide li").eq(index).animate({
+        "left":-100, 
+        "opacity":0,
+        "transform":"scale("+json[0].scale+")",
+    },'slow','linear',function(){
+        $("#box .slide li").eq(index).css({
+            "left":json[2].left, 
+            "transform":"scale("+json[2].scale+")",
+            "opacity":0,
+            "zIndex":json[3].zIndex,
+        });
+    })
+    //后两张图上前
+    $("#box .slide li").eq(arr[0]).css({
+    "left":json[0].left,
+    "transform":"scale("+json[0].scale+")",
+    "opacity":1,
+    "zIndex":json[0].zIndex
+    })
+    $("#box .slide li").eq(arr[1]).css({
+        "left":json[1].left,
+        "transform":"scale("+json[1].scale+")",
+        "opacity":1,
+        "zIndex":json[1].zIndex
+    })
+    //补位隐藏图显示
+    $("#box .slide li").eq(arr[2]).css({
+        "left":json[2].left,
+        "transform":"scale("+json[2].scale+")",
+        "opacity":1,
+        "zIndex":json[2].zIndex
+    })
+}
+
+var a=-1
+var timer=setInterval(function(){
+    a++;
+    if(a>=$("#box li").length){
+        a=0;
+    }
+    autoplay(a,arr,json);
+    console.log(a,new Date())
+},4000) 
+
+var pageVisibility = document.visibilityState; 
+// 监听 visibility change 事件 
+document.addEventListener('visibilitychange', function() {
+  // 页面变为不可见时触发 
+  if (document.visibilityState == 'hidden') { 
+      clearInterval(timer)
+      console.log("clearInterval")
+   } 
+  // 页面变为可见时触发 
+  if (document.visibilityState == 'visible') {
+    //回到当前页面立马执行动画
+    setTimeout(function(){
+        a++;
+        if(a>=$("#box li").length){
+            a=0;
+        }
+        autoplay(a,arr,json);
+        console.log(a,"settimeout")
+    },0)
+    //重启定时器
+    timer=setInterval(function(){
+        a++;
+        if(a>=$("#box li").length){
+            a=0;
+        }
+        autoplay(a,arr,json);
+        console.log(a,new Date())
+    },4000) 
+    console.log("timer")
+   } 
+  }
+);
+    </script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+li{
+    font-size: 50px;
+    color: orangered;
+    text-shadow: 5px 5px 5px #FF0000;
+    transform: rotate(7deg)
+}
+body{
+    color:#090
+}

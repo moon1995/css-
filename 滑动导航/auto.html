@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>问题：
+        1、连续滑动会出现问题
+        2、三个轮播有问题
+    </title>
+    <script src="zepto.js"></script>
+</head>
+<style type="text/css" media="screen">
+    html, body {
+    width: 500px;
+    background: #f90;
+    margin:0;
+    padding: 0;
+    max-width:500px;
+    height:500px;
+    overflow: hidden;
+    }
+    ul li {
+    list-style: none;
+
+    font-size: 50px
+    }
+
+    *{margin:0;padding:0;}
+    #box {
+    width: 100%;
+    margin: 20px auto;
+    }
+    .slide {
+    width:300px;
+    height: 500px;
+    position: relative;
+    }
+    .slide ul {
+    height: 100%;
+    width:300px;
+    }
+    .slide li {
+    position: absolute;
+    top:0;
+    transition: all 600ms ease 0s;
+    }
+    .slide li img{
+        width:200px;
+    height:300px;
+    }
+    .data.arraw {
+    opacity: 0;
+    }
+    .data.arraw a {
+    width: 70px;
+    height: 110px;
+    display: block;
+    position: absolute;
+    top: 50%;
+    margin-top: -55px;
+    z-index: 999;
+    }
+    .next {
+    background: #ff0;
+    right: -10px;
+    /*opacity: .5;*/
+    /*filter: alpha(opacity=50);*/
+    }
+    .prev {
+    background: #ff0;
+    left: -10px;
+    }
+    </style>
+<body>
+    <div id="box">
+        <div class="slide">
+            <ul>
+            <li><a href="#"><img src="imagePlayer/images/1.jpg" alt="">0</a></li>
+            <li><a href="#"><img src="imagePlayer/images/2.jpg" alt="">1</a></li>
+            <li><a href="#"><img src="imagePlayer/images/3.jpg" alt="">2</a></li>
+            <li><a href="#"><img src="imagePlayer/images/4.jpg" alt="">3</a></li>
+        
+            <!-- <li><a href="#"><img src="imagePlayer/images/3.jpg" alt=""></a></li> -->
+            </ul>
+        </div>
+    </div> 
+<script>
+    function run(){
+        var data={
+                touchStart:0,
+                isLeft:true,
+                distancX:0,
+                arr:[],
+                num:0,
+                json:[],
+                moveX:50,
+                firstLeft:100,
+                isTouch:true
+            };
+        var total=$("#box li").length;
+        var elementWidth=parseInt($("#box li").css("width"));
+        for(var i=0;i<total;i++){
+            data.arr.push(i)
+            if(i==2){
+                data.json.push({"left":data.firstLeft+(1-0.7)*elementWidth/2+data.moveX/2*3,"opacity":"1","zIndex":$("#box li").length-i,"scale":0.7})
+
+            }else if(i>2){
+                data.json.push({"left":data.firstLeft+(1-0.7)*elementWidth/2+data.moveX/2*3,"opacity":"0","zIndex":$("#box li").length-i,"scale":0.7})
+            }else{
+                data.json.push({"left":data.firstLeft+(1-(1-0.2*i))*elementWidth/2+data.moveX*i,"opacity":"1","zIndex":$("#box li").length-i,"scale":1-0.2*i})
+            }
+        }
+            console.log(data.json)
+
+        for(var i=0;i<data.json.length;i++){
+            //设置默认样式
+            $("#box .slide li").eq(i).css({
+                "left":data.json[i].left,
+                "zIndex":data.json[i].zIndex,
+                "transform":"scale("+data.json[i].scale+")",
+                "opacity":data.json[i].opacity
+            })
+            console.log("_-----------")
+        }
+        function autoplay(index,arr,json){ 
+            /*
+                三个参数：
+                index:最前面消失元素的index
+                data.arr:所有元素的下角标数组集合
+                data.json:每个元素的位置
+            */
+            if(data.isLeft){
+                //数组第一个移动到最后
+                    data.arr.push(data.arr.shift())
+            }else{
+                //数组最后一个移动到最前面
+                    data.arr.unshift(data.arr.pop())
+            }
+            animate(index,data.arr,data.json,0,data.isTouch);
+        }
+        // autoplay(data.num,data.arr,data.json);
+        var timer=setInterval(function(){
+            data.num++;
+            if(data.num>=$("#box li").length){
+                data.num=0;
+            }
+            autoplay(data.num,data.arr,data.json);
+        },4000) 
+
+        function animate(index,arr,json,distancX,istouch){
+            var arrLength=data.arr.length-1
+            console.log(arr,index,istouch)
+            data.isTouch=true
+                //最前面的图消失
+            if(data.isLeft){
+                console.log("isleft",data.arr[arrLength])
+                //左滑动画
+                $("#box .slide li").eq(data.arr[arrLength]).animate({
+                    "left":-100, 
+                    "opacity":0,
+                    "transform":"scale("+data.json[0].scale+")",
+                },'slow','ease',function(){
+            
+                    $("#box .slide li").eq(data.arr[arrLength]).css({
+                        "left":data.json[2].left, 
+                        "transform":"scale("+data.json[2].scale+")",
+                        "opacity":0,
+                        "zIndex":data.json[3].zIndex,
+                    });
+                })
+                    
+                        //后两张图上前
+                $("#box .slide li").eq(data.arr[0]).css({
+                    "left":data.json[0].left,
+                    "transform":"scale("+data.json[0].scale+")",
+                    "opacity":1,
+                    "zIndex":data.json[0].zIndex
+                })
+                $("#box .slide li").eq(data.arr[1]).css({
+                    "left":data.json[1].left,
+                    "transform":"scale("+data.json[1].scale+")",
+                    "opacity":1,
+                    "zIndex":data.json[1].zIndex
+                })
+                //补位隐藏图显示
+                $("#box .slide li").eq(data.arr[2]).css({
+                    "left":data.json[2].left,
+                    "transform":"scale("+data.json[2].scale+")",
+                    "opacity":1,
+                    "zIndex":data.json[2].zIndex
+                })
+            
+            }else{
+                //右滑动画
+                $("#box .slide li").eq(data.arr[0]).animate({
+                    "left":-100,
+                    "transform":"scale("+data.json[0].scale+")",
+                    "opacity":0,
+                    "zIndex":data.json[0].zIndex
+                },'slow','ease',function(){
+                    //补位隐藏图隐藏
+                    $("#box .slide li").eq(data.arr[3]).css({
+                        "left":data.json[3].left,
+                        "transform":"scale("+data.json[3].scale+")",
+                        "opacity":0,
+                        "zIndex":data.json[3].zIndex
+                    })
+
+                    //后两张图后置
+                    $("#box .slide li").eq(data.arr[2]).css({
+                        "left":data.json[2].left,
+                        "transform":"scale("+data.json[2].scale+")",
+                        "opacity":1,
+                        "zIndex":data.json[2].zIndex
+                    })
+                    $("#box .slide li").eq(data.arr[1]).css({
+                        "left":data.json[1].left,
+                        "transform":"scale("+data.json[1].scale+")",
+                        "opacity":1,
+                        "zIndex":data.json[1].zIndex
+                    })
+                    $("#box .slide li").eq(data.arr[0]).css({
+                        "left":data.json[0].left,
+                        "transform":"scale("+data.json[0].scale+")",
+                        "opacity":1,
+                        "transition":"all 600ms ease 0s",
+                        "zIndex":data.json[0].zIndex
+                    });
+                })
+            
+                
+            }
+        }
+
+
+        function touch(container,arr){
+            $(container).bind('touchstart',function(e){
+                data.distancX=0
+                clearInterval(timer)
+                var e = event.touches[0] || event;
+                data.eTarget=$(e.target.closest("li"))
+                data.touchStart=e.pageX;
+            })
+        
+            $(container).bind("touchmove",function(event){
+                var e = event.touches[0] || event;
+                var distancX=e.pageX-data.touchStart;
+                data.distancX=distancX;
+                if(distancX < 0){
+                    data.isLeft=true; //向左滑
+            
+                }else{
+                    data.isLeft=false;
+
+                }
+            });
+            $(container).bind("touchend",function(){
+                console.log(data.distancX,data.isLeft)
+                clearInterval(timer);
+                if(data.isLeft && data.distancX <-50 || data.distancX ==0){
+                    //滑动距离为0 时
+                    data.isLeft=true;
+                    data.num=data.num+1;
+                    if(data.num>data.arr.length-1){
+                        data.num=0
+                    }
+                    //左滑
+                    console.log("true")
+                    autoplay(data.num,data.arr,data.json);
+                    // timer=setInterval(function(){
+                    //     data.num++;
+                    //     if(data.num>=$("#box li").length){
+                    //         data.num=0;
+                    //     }
+                    //     autoplay(data.num,data.arr,data.json);
+                    // },4000)
+                }else if(data.isLeft ==false && data.distancX > 50 ){
+                    //右滑
+                    data.num=data.num-1;
+                    if(data.num<0 ){
+                        data.num=data.arr.length-1
+                    }
+                    console.log("flase")
+                    autoplay(data.num,data.arr,data.json)
+                    // timer=setInterval(function(){
+                    //     data.isLeft=true
+                    //     data.num++;
+                    //     if(data.num>=$("#box li").length){
+                    //         data.num=0;
+                    //     }
+                    //     autoplay(data.num,data.arr,data.json);
+                    // },4000)
+                }
+            })
+        }
+        touch("#box .slide",data.arr)
+
+
+        var pageVisibility = document.visibilityState; 
+        // 监听 visibility change 事件 
+        document.addEventListener('visibilitychange', function() {
+        // 页面变为不可见时触发 
+            if (document.visibilityState == 'hidden') { 
+                clearInterval(timer)
+                console.log("clearInterval")
+            } 
+            // 页面变为可见时触发 
+            if (document.visibilityState == 'visible') {
+                //回到当前页面立即执行动画
+                setTimeout(function(){
+                    data.isLeft=true
+                    data.num++;
+                    if(data.num>=$("#box li").length){
+                        data.num=0;
+                    }
+                    autoplay(data.num,data.arr,data.json);
+                    console.log(data.num,"settimeout")
+                },1000)
+                //重启定时器
+                timer=setInterval(function(){
+                    data.num++;
+                    if(data.num>=$("#box li").length){
+                        data.num=0;
+                    }
+                    autoplay(data.num,data.arr,data.json);
+                },4000) 
+                console.log("timer")
+            } 
+        });
+    }
+    run()
+</script>
+</body>
+</html>
