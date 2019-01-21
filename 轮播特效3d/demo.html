@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html data-design-width="750" data-design-font="100">
+<head>
+  <meta charset="utf-8">
+  <title>Swiper demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
+
+  <!-- Link Swiper's CSS -->
+  <link rel="stylesheet" href="swiper.min.css">
+  <script src="swiper.animate1.0.3.min.js"></script>
+  <link rel="stylesheet" href="animate.min.css">
+<script>
+(function(window, undefined){
+            var html_dom = document.getElementsByTagName('html')[0];
+            var design_width = parseInt(html_dom.dataset.designWidth, 10);
+            var design_font = parseInt(html_dom.dataset.designFont, 10);
+            var isMobile = /Mobile/.test(window.navigator.userAgent);
+            window.onresize = function () {
+                resizeRoot();
+            }
+            function resizeRoot() {
+                var client_width = document.documentElement.clientWidth;
+                if (client_width >= 750) {
+                    client_width = 750;
+                }
+                var fs = client_width / design_width * design_font;
+                html_dom.style.fontSize = fs + "px";
+            };
+            resizeRoot();
+        })(window)
+</script>
+  <!-- Demo styles -->
+  <style>
+    body {
+      background: #fff;
+      font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+      font-size: 14px;
+      color:#000;
+      margin: 0;
+      padding: 0;
+    }
+    .swiper-container {
+      width: 100%;
+      height:6rem;
+      position: relative;
+      /* margin:0 .1rem; */
+      /* margin-left:-40px; */
+    }
+   /* .swiper-slide-duplicate-next{
+     opacity:0;
+   } */
+    .swiper-slide {
+      background-position: center;
+      background-size: cover;
+      width: 4rem;
+      height: 100%;
+      color:#fff;
+      font-size:30px;
+      /* opacity:0; */
+      /* transition: all 1500ms ease 0s; */
+    }
+    .swiper-slide img{
+      width:100%;
+      height:100%;
+      display: inline;
+    }
+    /* .shadow{
+      width:100px;
+      height:100px;
+      background: rgba(0, 0, 0, 0.3);
+      position: absolute;
+      top:0;
+      left:0;
+      z-index:1000;
+    } */
+ 
+    .swiper-slide-duplicate-prev,.swiper-slide-duplicate-active{
+      opacity:0;
+      transition: all 1s ease 0s;
+    }
+    .swiper-slide-active,.swiper-slide-next{
+      transition: all 1s ease 0s;
+    } 
+    .swiper-slide-prev{
+      opacity:0;
+      transition: all 600ms ease 0s;
+    }
+    .box{
+      width:100%;
+      height:1000px;
+      background:#f00;
+    }
+  </style>
+</head>
+<body>
+    <!-- <div class="swiper-c">
+        <div style="background-image:url(/img/Parallax.jpg)" data-swiper-parallax="-23%" data-swiper-parallax-duration="3000"></div>
+            <div class="swiper-wrapper">
+               <div class="swiper-slide">
+                    <div class="title" data-swiper-parallax="-100">从右边100px开始进入</div>
+                    <div class="subtitle" data-swiper-parallax="-200">从右边200px开始进入</div>
+                    <div class="text" data-swiper-parallax="-300" data-swiper-parallax-duration="600">
+                      <p>从右边300px开始进入，时间600ms</p>
+                    </div>
+                    <div data-swiper-parallax="0" data-swiper-parallax-opacity="0.5" >透明度变化</div>
+                    <div data-swiper-parallax-scale="0.15" >缩放变化</div>
+                </div>
+            </div>
+        </div>
+        <script language="javascript"> 
+            var mySwiper = new Swiper('.swiper-c',{
+                    parallax : true,
+            })
+        </script> -->
+  <!-- Swiper -->
+  <div>
+    <div class="swiper-container">
+        <div class="swiper-wrapper">
+          <div class="swiper-slide" style="background-image:url(4.jpg)">1</div>
+          <div class="swiper-slide" style="background-image:url(5.jpg)" >2</div>
+          <div class="swiper-slide" style="background-image:url(3.jpg)">3</div>
+          <div class="swiper-slide" style="background-image:url(3.jpg)">4</div>
+          <!-- <div class="swiper-slide" style="background-image:url(3.jpg)">3</div> -->
+          <!-- <div class="swiper-slide" style="background-image:url(3.jpg)">3</div> -->
+        </div>
+        <!-- <div class="shadow"></div> -->
+      </div>
+  </div>
+  <div class="box"></div>
+
+  <!-- Swiper JS -->
+  <script src="swiper.min.js"></script>
+  <script src="zepto.js"></script>
+  <!-- Initialize Swiper -->
+  <script>
+    var data={
+      opacity:1,
+      startX:0,
+      startY:0,
+      firstslide:"",
+      before:"",
+      distance:100,
+      opacity1:0
+    }
+    var this_swiper  = $('.swiper-wrapper');
+    var swiper = new Swiper('.swiper-container', {
+      effect: 'coverflow',
+      // grabCursor: true,
+      centeredSlides: true,
+      slidesPerView:'auto',
+      // direction:'horizontal',
+      slidesPerGroup:1,
+      // parallax:true,
+      // initialSlide :0,//这只初始位置
+      speed:600,
+      // touchAngle:10,
+      // // spaceBetween:-90,
+      // // slidesOffsetBefore:5000,
+      // // slidesOffsetAfter:500,
+      // watchSlidesProgress : true,
+      loop:true,
+      // loopAdditionalSlides:8,
+      // // loopedSlides: 3,
+      // touchEventsTarget: 'wrapper',
+      // autoplay:false,
+      // slideDuplicatedNextClass : 'my-slide-duplicate-next',
+      touchMoveStopPropagation : false,
+      longSwipes: false,
+      autoplay: {
+        disableOnInteraction: true,
+      },
+      coverflowEffect: {
+        rotate: 0,
+        stretch:70, //值越大越近凑
+        depth:100,
+        modifier: 2,
+        slideShadows : false,
+      },
+      on:{
+        init:function(){
+        
+        },
+        touchStart:function(){
+          // data.startX=e.touches[0].pageX
+          // data.startY=e.touches[0].pageY
+          data.firstslide=$(".swiper-container .swiper-wrapper .swiper-slide-active")
+          data.before=$(".swiper-container .swiper-wrapper .swiper-slide-prev")
+        },
+        touchMove:function(){ 
+          // data.opacity=data.opacity-0.01
+          // data.firstslide.css({"opacity":data.opacity})
+          // // data.firstslide.css("height",100)
+          // data.opacity1=  data.opacity1+0.01
+          // // data.before.css("opacity",data.opacity1)
+        },
+        touchEnd:function(){
+          // $(".swiper-slide-active").css("opacity",1)
+        //   var endx, endy;
+        // endx = e.changedTouches[0].pageX;
+        // endy = e.changedTouches[0].pageY;
+        // var direction = getDirection(startx, starty, endx, endy);
+        },
+        transitionStart:function(){
+          $(".swiper-slide-active").prevAll().css({"zIndex":1})
+          $(".swiper-slide-active").css("opacity",1)
+          $(".swiper-slide-next").css("opacity",1)
+          $(".swiper-slide-active").prevAll().css("opacity",0)
+          $(".swiper-slide-next").nextAll().css("opacity",0)
+          $(".swiper-slide-next").next().css("opacity",1)
+      
+        }
+      },
+    
+      pagination: {
+        el: '.swiper-pagination',
+        type: 'fraction',
+      },
+
+    });
+
+    function getAngle(angx, angy) {
+        return Math.atan2(angy, angx) * 180 / Math.PI;
+    };
+ 
+    //根据起点终点返回方向 1向上 2向下 3向左 4向右 0未滑动
+    function getDirection(startx, starty, endx, endy) {
+        var angx = endx - startx;
+        var angy = endy - starty;
+        var result = 0;
+ 
+        //如果滑动距离太短
+        if (Math.abs(angx) < 2 && Math.abs(angy) < 2) {
+            return result;
+        }
+ 
+        var angle = getAngle(angx, angy);
+        if (angle >= -135 && angle <= -45) {
+            result = 1;
+        } else if (angle > 45 && angle < 135) {
+            result = 2;
+        } else if ((angle >= 135 && angle <= 180) || (angle >= -180 && angle < -135)) {
+            result = 3;
+        } else if (angle >= -45 && angle <= 45) {
+            result = 4;
+        }
+ 
+        return result;
+    }
+  </script>
+</body>
+</html>
