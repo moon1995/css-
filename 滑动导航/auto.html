@@ -12,11 +12,10 @@
 </head>
 <style type="text/css" media="screen">
     html, body {
-    width: 500px;
+    width: 100%;
     background: #f90;
     margin:0;
     padding: 0;
-    max-width:500px;
     height:500px;
     overflow: hidden;
     }
@@ -79,7 +78,7 @@
             <li><a href="#"><img src="imagePlayer/images/1.jpg" alt="">0</a></li>
             <li><a href="#"><img src="imagePlayer/images/2.jpg" alt="">1</a></li>
             <li><a href="#"><img src="imagePlayer/images/3.jpg" alt="">2</a></li>
-            <li><a href="#"><img src="imagePlayer/images/4.jpg" alt="">3</a></li>
+            <!-- <li><a href="#"><img src="imagePlayer/images/4.jpg" alt="">3</a></li> -->
         
             <!-- <li><a href="#"><img src="imagePlayer/images/3.jpg" alt=""></a></li> -->
             </ul>
@@ -99,6 +98,7 @@
                 isTouch:true
             };
         var total=$("#box li").length;
+        var settimeout;
         var elementWidth=parseInt($("#box li").css("width"));
         for(var i=0;i<total;i++){
             data.arr.push(i)
@@ -152,6 +152,7 @@
             var arrLength=data.arr.length-1
             console.log(arr,index,istouch)
             data.isTouch=true
+            clearTimeout(settimeout)
                 //最前面的图消失
             if(data.isLeft){
                 console.log("isleft",data.arr[arrLength])
@@ -168,6 +169,9 @@
                         "opacity":0,
                         "zIndex":data.json[3].zIndex,
                     });
+                    settimeout=setTimeout(function(){
+                        touch("#box .slide",data.arr)
+                    },10)
                 })
                     
                         //后两张图上前
@@ -227,6 +231,9 @@
                         "transition":"all 600ms ease 0s",
                         "zIndex":data.json[0].zIndex
                     });
+                    settimeout=setTimeout(function(){
+                        touch("#box .slide",data.arr)
+                    },10)
                 })
             
                 
@@ -258,6 +265,7 @@
             $(container).bind("touchend",function(){
                 console.log(data.distancX,data.isLeft)
                 clearInterval(timer);
+                $(container).unbind()
                 if(data.isLeft && data.distancX <-50 || data.distancX ==0){
                     //滑动距离为0 时
                     data.isLeft=true;
